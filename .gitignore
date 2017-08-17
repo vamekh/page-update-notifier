@@ -1,0 +1,37 @@
+# Commons
+
+# Logs
+**/*.log
+
+# Runtime data
+*.pid
+*.seed
+
+# for text editors
+**/*.*~
+
+# action hero
+**/pids
+
+# nbproject for netbeans
+**/nbproject/
+**/node_modules/
+
+# for idea
+**/.idea/
+**/target/
+**/*.iml
+
+# for visual studio
+**/.vs/
+**/*.njsproj
+**/.ntvs_analysis.dat
+**/obj/Debug
+**/*.sln
+
+# Plugins
+**/bower_components
+
+#Mac Folder Structure
+.DS_Store
+**/.DS_Store

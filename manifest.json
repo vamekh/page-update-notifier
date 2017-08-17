@@ -1,0 +1,39 @@
+﻿{
+	"manifest_version": 2,
+	"name": "Page Update Notifier",
+	"description": "შექმენით შაბლონები და გამოიწერეთ ახალი ინსტანსები",
+	"version": "1.0",
+	"author": "ვამეხ ბაშარული",
+	"icons": {
+		"16": "sms16.png",
+		"48": "sms48.png",
+		"128": "sms128.png"
+	},
+	"permissions": [
+		"activeTab",
+		"tabs",
+		"http://*.*/*",
+		"https://*.*/*"
+	],
+	"page_action":{
+		"default_icon": "sms48.png"
+	},
+	"browserAction": {
+		"default_icon": "sms48.png",
+		"default_title": "Click to view new instances",
+		"popup": "popup.html"
+	},
+	"background": {
+		"scripts": ["background.js"]
+	},
+	"content_scripts": [
+		{
+			"matches": ["*://sms.tsu.ge/sms/Students/Cxrilebi*"],
+			"js": ["jquery.js", "content.js"],
+			"css": [
+				"new-schedule-style.css"
+			],
+			"run_at": "document_end"
+		}
+	]
+}

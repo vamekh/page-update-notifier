@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="updateNotifierApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Notifier Settings</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="angular.min.js"></script>
+</head>
+<body>
+<div class="container" ngController="AppController">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label ng-click="console.log('click fired') || addSubscription()">სახელი</label>
+                <input class="form-control" tabindex="1" ng-model="subscriptionToAdd.name" >
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>ბმული</label>
+                <input class="form-control" tabindex="2" ng-model="subscriptionToAdd.link" >
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>სელექტორი</label>
+                <input class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" >
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label style="opacity: 0">hidden</label>
+                <span class="form-control" type="button" tabindex="4" onclick="console.log('sssss')" ng-click="addSubscription()">Save</span>
+            </div>
+        </div>
+
+        {{subscriptionToAdd}}
+    </div>
+    <div class="row">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Link</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="s in app.subscriptions">
+                <td>mymarket</td>
+                <td>https://snknfkndk.skf/sfdfnkdvn</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="options.js"></script>
+<script src="application.js"></script>
+</body>
+</html>

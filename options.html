@@ -7,43 +7,64 @@
     <script src="options.js"></script>
     <script src="angular.min.js"></script>
     <script src="application.js"></script>
+    <style>
+        .smaller{
+            font-size: .8em;
+        }
+    </style>
 </head>
 <body>
 <div class="container" ng-controller="personController">
-    <div class="row">
+    <h1>Page Update Notifier</h1>
+    <form class="row">
         <div class="col-md-3">
             <div class="form-group">
                 <label for="newItemName">სახელი</label>
-                <input id="newItemName" class="form-control" tabindex="1" ng-model="subscriptionToAdd.name" >
+                <input id="newItemName" class="form-control" tabindex="1" ng-model="subscriptionToAdd.name" required>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label for="newItemLink">ბმული</label>
-                <input id="newItemLink" class="form-control" tabindex="2" ng-model="subscriptionToAdd.link" >
+                <input id="newItemLink" class="form-control" tabindex="2" ng-model="subscriptionToAdd.link" required>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="form-group">
                 <label for="newItemIdSelector">სელექტორი</label>
-                <input id="newItemIdSelector" class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" >
+                <input id="newItemIdSelector" class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" required>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="newItemInterval">ინტერვალი</label>
+                <select id="newItemInterval" class="form-control" tabindex="4" required>
+                    <option value="{{60*1000}}">1 წუთი</option>
+                    <option value="{{5*60*1000}}">5 წუთი</option>
+                    <option value="{{15*60*1000}}">15 წუთი</option>
+                    <option value="{{30*60*1000}}">30 წუთი</option>
+                    <option value="{{60*60*1000}}">1 საათი</option>
+                    <option value="{{2*60*60*1000}}">2 საათი</option>
+                    <option value="{{6*60*60*1000}}">6 საათი</option>
+                    <option value="{{24*60*60*1000}}">1 დღე</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
             <div class="form-group">
                 <label style="opacity: 0">hidden</label>
-                <button id="addNewSubscription" class="form-control" type="button" tabindex="4" ng-click="addSubscription()">Save</button>
+                <button id="addNewSubscription" class="form-control" type="button" tabindex="5" ng-click="addSubscription()">Save</button>
             </div>
         </div>
-    </div>
+    </form>
     <div class="row">
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Updates</th>
-                <th>Name</th>
-                <th>Link</th>
-                <th>Selector</th>
+                <th>განახლება</th>
+                <th>სახელი</th>
+                <th>ბმული</th>
+                <th>სელექტორი</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -56,13 +77,13 @@
                 <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
                 <td>{{s.idSelector}}</td>
                 <td>
-                    <button class="btn btn-danger" ng-click="removeSubscription($index)">წაშლა</button>
+                    <button class="btn btn-danger smaller" ng-click="removeSubscription($index)">წაშლა</button>
                 </td>
                 <td>
-                    <button class="btn btn-warning" ng-click="editSubscription($index)">შეცვლა</button>
+                    <button class="btn btn-warning smaller" ng-click="editSubscription($index)">შეცვლა</button>
                 </td>
                 <td>
-                    <button class="btn btn-success" ng-click="resetSubscription($index)">ჩამოყრა</button>
+                    <button class="btn btn-success smaller" ng-click="resetSubscription($index)">ჩამოყრა</button>
                 </td>
             </tr>
             </tbody>

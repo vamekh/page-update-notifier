@@ -5,18 +5,18 @@
   "version": "1.0",
   "author": "ვამეხ ბაშარული",
   "icons": {
-    "16": "sms16.png",
-    "48": "sms48.png",
-    "128": "sms128.png"
+    "16": "icon128.png",
+    "48": "icon128.png",
+    "128": "icon128.png"
   },
   "permissions": [
     "activeTab",
     "tabs",
-    "https://www.myhome.ge/*",
-    "https://www.mymarket.ge/*"
+    "http://*/*",
+    "https://*/*"
   ],
   "browser_action": {
-    "default_icon": "sms48.png",
+    "default_icon": "icon128.png",
     "default_title": "Click to view new instances",
     "popup": "popup.html"
   },
@@ -28,20 +28,5 @@
       "background.js"
     ]
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://sms.tsu.ge/sms/Students/Cxrilebi*"
-      ],
-      "js": [
-        "jquery.js",
-        "content.js"
-      ],
-      "css": [
-        "new-schedule-style.css"
-      ],
-      "run_at": "document_end"
-    }
-  ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

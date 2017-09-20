@@ -25,22 +25,6 @@ setInterval(function () {
     });
 }, 15000);
 
-/*
-function processSubscription(subscription) {
-    return function (res) {
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(res.srcElement.responseText, "text/html");
-        var results = doc.querySelectorAll(subscription.idSelector);
-        if (results.length === 0) subscription.updateCount = 0;
-        var newValue = 0;
-        for(var i = 0; i < results.length; i++){
-            if (results[i].innerHTML === subscription.lastValue){
-                newValue = i;
-                break;
-            }
-        }
-        subscription.updateCount = newValue;
-        appData.synchronize();
-        console.log('results', results);
-    };
-}*/
+chrome.browserAction.setBadgeText({text: ''});
+bd = chrome.extension.getBackgroundPage();
+bg=unreadCount = 0;

@@ -14,9 +14,18 @@ function UpdateNotifier() {
         this.trash = [];
         this.trashSize = 10;
     }
+    for(var i = 0; i < this.subscriptions.length; i++) this.subscriptions[i] = new Subscription(this.subscriptions[i]);
+    for(var j = 0; j < this.trash.length; j++) this.trash[j] = new Subscription(this.trash[j]);
 
     this.synchronize = function () {
-        console.log("must be saved", JSON.stringify(this));
+        var totalUpdatesNewValue= 0;
+        for(var k = 0; k< this.subscriptions.length; k++){
+            totalUpdatesNewValue += this.subscriptions[k].updateCount;
+        }
+        this.totalUpdates = totalUpdatesNewValue;
+
+        chrome.browserAction.setBadgeText({text: this.totalUpdates ? this.totalUpdates + '' : ''});
+
         localStorage[address] = JSON.stringify(this);
         return true;
     };
@@ -24,7 +33,7 @@ function UpdateNotifier() {
     this.addSubscription = function (subscription) {
         var me = this;
         console.log('add sub', subscription);
-        if(subscription instanceof Subscription){
+        if (subscription instanceof Subscription) {
             console.log('subscription instanceof Subscription. this: ', this);
             this.subscriptions.push(subscription);
             subscription.checkForUpdates(function () {
@@ -34,15 +43,28 @@ function UpdateNotifier() {
     }
 }
 
-function Subscription(name, link, idSelector, viewSelector, lastValue) {
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
-    this.name = name;
-    this.link = link;
-    this.idSelector = idSelector;
-    this.viewSelector = viewSelector;
-    this.lastValue = lastValue;
-    this.updateCount = 0;
+function Subscription(name, link, idSelector, interval, viewSelector, lastValue) {
+    if(arguments.length === 1 && arguments[0] instanceof Object){
+        this.createdAt = arguments[0].createdAt;
+        this.updatedAt = arguments[0].updatedAt;
+        this.name = arguments[0].name;
+        this.link = arguments[0].link;
+        this.idSelector = arguments[0].idSelector;
+        this.interval = arguments[0].interval;
+        this.viewSelector = arguments[0].viewSelector;
+        this.lastValue = arguments[0].lastValue;
+        this.updateCount = arguments[0].updateCount;
+    }else {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+        this.name = name;
+        this.link = link;
+        this.idSelector = idSelector;
+        this.interval = interval;
+        this.viewSelector = viewSelector;
+        this.lastValue = lastValue;
+        this.updateCount = 0;
+    }
 
 }
 
@@ -55,18 +77,23 @@ Subscription.prototype.checkForUpdates = function (cb) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(res.srcElement.responseText, "text/html");
             var results = doc.querySelectorAll(me.idSelector);
-            if(!me.lastValue){
-                if(results.length > 0){
+            if (!me.lastValue) {
+                if (results.length > 0) {
                     me.lastValue = results[0].innerHTML;
                 }
             }
             var updateCountNewValue = 0;
             for (var i = 0; i < results.length; i++) {
-                if (results[i].innerHTML === me.lastValue) break;
                 updateCountNewValue = i;
+                if (results[i].innerHTML === me.lastValue) {
+                    console.log("found new value. i = " + i);
+                    break;
+                }
             }
+            console.log('update >>>>', me.lastValue, results[0].innerHTML);
             me.updateCount = updateCountNewValue;
-cb();        };
+            cb();
+        };
         req.send();
     } catch (e) {
 

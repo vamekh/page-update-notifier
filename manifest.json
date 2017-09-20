@@ -5,9 +5,9 @@
   "version": "1.0",
   "author": "ვამეხ ბაშარული",
   "icons": {
-    "16": "icon128.png",
-    "48": "icon128.png",
-    "128": "icon128.png"
+    "16": "icons/icon128.png",
+    "48": "icons/icon128.png",
+    "128": "icons/icon128.png"
   },
   "permissions": [
     "activeTab",
@@ -16,16 +16,16 @@
     "https://*/*"
   ],
   "browser_action": {
-    "default_icon": "icon128.png",
+    "default_icon": "icons/icon128.png",
     "default_title": "Click to view new instances",
-    "popup": "popup.html"
+    "popup": "pop-up/pop-up.html"
   },
-  "options_page": "options.html",
+  "options_page": "options/options.html",
   "background": {
     "persistent": false,
     "scripts": [
-      "options.js",
-      "background.js"
+      "common/update-notifier.js",
+      "background/background.js"
     ]
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"

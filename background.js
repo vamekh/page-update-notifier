@@ -4,18 +4,6 @@
 	}
 };*/
 
-/*
-//მოუსმენს ყველა ტაბის ყველა ცვლილებას.
-chrome.tabs.onUpdated.addListener(checkForValidUrl);
-
-chrome.pageAction.onClicked.addListener(function(tab){
-		chrome.tabs.sendMessage(tab.id, {show: "change"}, function(response) {
-		console.log(response);
-	});	
-});
-
-*/
-
 setInterval(function () {
     var appData = new UpdateNotifier();
     appData.subscriptions.forEach(function (s) {

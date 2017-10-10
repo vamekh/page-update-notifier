@@ -4,94 +4,244 @@
     <meta charset="UTF-8">
     <title>Update Notifier Settings</title>
     <link rel="stylesheet" href="../common/bootstrap.min.css">
+    <link rel="stylesheet" href="../fonts/font-awesome.min.css">
+
     <script src="../common/update-notifier.js"></script>
-    <script src="angular.min.js"></script>
+    <script src="../common/angular.min.js"></script>
     <script src="options-controller.js"></script>
     <style>
-        .smaller{
+        .smaller {
             font-size: .8em;
         }
+
+        table td button.btn {
+            font-size: 1.2em;
+            padding: 0.2em 0.4em;
+        }
+
+        .link:hover {
+            color: #0275d8;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        @keyframes roll {
+            100% {
+                transform:rotate(360deg);
+            }
+        }
+
+        @keyframes flash {
+            0% {
+                background: rgba(2, 117, 216, .5);
+            }
+            10% {
+                background: rgba(2, 117, 216, .5);
+            }
+            100% {
+                background: white;
+            }
+        }
+
+        .roll-infinite{
+            animation: roll 1s linear infinite;
+        }
+
+        .jiggle {
+            animation-name: jiggle;
+            animation-duration: .5s;
+            animation-fill-mode: both;
+            animation-timing-function: ease-in
+        }
+
+        @-webkit-keyframes shake-y {
+            0% {
+                transform: translateY(0px)
+            }
+            12.5% {
+                transform: translateY(1em)
+
+            }
+            25% {
+                transform: translateY(-.4em)
+            }
+            37.5% {
+                transform: translateY(.4em)
+            }
+            50% {
+                transform: translateY(-.25em)
+            }
+            62.5% {
+                transform: translateY(.2em)
+            }
+            75% {
+                transform: translateY(-.15em)
+            }
+            87.5% {
+                transform: translateY(.08em)
+            }
+            to {
+                transform: translateY(0)
+            }
+        }
+        @-webkit-keyframes shake-x {
+            0% {
+                transform: translateX(0px)
+            }
+            12.5% {
+                transform: translateX(1em)
+            }
+            25% {
+                transform: translateX(-.4em)
+            }
+            37.5% {
+                transform: translateX(.4em)
+            }
+            50% {
+                transform: translateX(-.25em)
+            }
+            62.5% {
+                transform: translateX(.2em)
+            }
+            75% {
+                transform: translateX(-.15em)
+            }
+            87.5% {
+                transform: translateX(.08em)
+            }
+            to {
+                transform: translateX(0)
+            }
+        }
+
+        .edit-form.active {
+            animation-name: flash;
+            animation-duration: 1s;
+            animation-timing-function: ease-in-out;
+        }
+        .edit-form.active {
+            animation-name: shake-x;
+            animation-duration: .5s;
+            animation-fill-mode: both;
+            animation-timing-function: ease-in
+        }
+
     </style>
 </head>
 <body>
 <div class="container" ng-controller="personController">
-    <h1>Page Update Notifier</h1>
-    <form class="row">
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="newItemName">სახელი</label>
-                <input id="newItemName" class="form-control" tabindex="1" ng-model="subscriptionToAdd.name" required>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="newItemLink">ბმული</label>
-                <input id="newItemLink" class="form-control" tabindex="2" ng-model="subscriptionToAdd.link" required>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <label for="newItemIdSelector">სელექტორი</label>
-                <input id="newItemIdSelector" class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" required>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <label for="newItemInterval">ინტერვალი</label>
-                <select id="newItemInterval" class="form-control" tabindex="4" required>
-                    <option value="{{60*1000}}">1 წუთი</option>
-                    <option value="{{5*60*1000}}">5 წუთი</option>
-                    <option value="{{15*60*1000}}">15 წუთი</option>
-                    <option value="{{30*60*1000}}">30 წუთი</option>
-                    <option value="{{60*60*1000}}">1 საათი</option>
-                    <option value="{{2*60*60*1000}}">2 საათი</option>
-                    <option value="{{6*60*60*1000}}">6 საათი</option>
-                    <option value="{{24*60*60*1000}}">1 დღე</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <label style="opacity: 0">hidden</label>
-                <button id="addNewSubscription" class="form-control" type="button" tabindex="5" ng-click="addSubscription()">Save</button>
-            </div>
-        </div>
-    </form>
-    <div class="row">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>განახლება</th>
-                <th>სახელი</th>
-                <th>ბმული</th>
-                <th>სელექტორი</th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="s in app.subscriptions">
-                <td><span class="badge badge-pill badge-{{s.updateCount > 0 ? 'success' : 'default'}}">{{s.updateCount || 0}}</span></td>
-                <td>{{s.name}}</td>
-                <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
-                <td>{{s.idSelector}}</td>
-                <td>
-                    <button class="btn btn-danger smaller" ng-click="removeSubscription($index)">წაშლა</button>
-                </td>
-                <td>
-                    <button class="btn btn-warning smaller" ng-click="editSubscription($index)">შეცვლა</button>
-                </td>
-                <td>
-                    <button class="btn btn-success smaller" ng-click="resetSubscription($index)">ჩამოყრა</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="row" style="display: flex; justify-content: space-between">
+        <h1>Page Update Notifier</h1>
+        <span ng-if="viewMode == 1" ng-click="changeView(2)" class="link"><i class="fa fa-trash-o" aria-hidden="true"></i> Trash</span>
+        <span ng-if="viewMode == 2" ng-click="changeView(1)" class="link"><i class="fa fa-undo" aria-hidden="true"></i> Back</span>
     </div>
-    <!--<div class="row">-->
-        <!--<div class="btn {{synchronized ? 'btn-outline-secondary' : 'btn-success'}}" ng-disabled="synchronized" ng-click="synchronizeSubscriptions()">{{synchronized ? 'შენახულია': 'შენახვა'}}</div>-->
-    <!--</div>-->
+    <div ng-if="viewMode == 1">
+        <form class="edit-form row" ng-class="{active: editingIndex !== -1}">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="newItemName">Name it</label>
+                    <input id="newItemName" class="form-control" tabindex="1" ng-model="subscriptionToAdd.name" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="newItemLink">Link</label>
+                    <input id="newItemLink" class="form-control" tabindex="2" ng-model="subscriptionToAdd.link" required ng-pattern="/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="newItemIdSelector">Selector</label>
+                    <input id="newItemIdSelector" class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="newItemInterval">Interval</label>
+                    <select id="newItemInterval" class="form-control" tabindex="4" required ng-model="subscriptionToAdd.interval">
+                        <option value="{{5*1000}}">5 seconds</option>
+                        <option value="{{60*1000}}">1 minute</option>
+                        <option value="{{5*60*1000}}">5 minutes</option>
+                        <option value="{{15*60*1000}}">15 minutes</option>
+                        <option value="{{30*60*1000}}">30 minutes</option>
+                        <option value="{{60*60*1000}}">1 hour</option>
+                        <option value="{{2*60*60*1000}}">2 hours</option>
+                        <option value="{{6*60*60*1000}}">6 hours</option>
+                        <option value="{{24*60*60*1000}}">1 day</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label style="opacity: 0">hidden</label>
+                    <button id="addNewSubscription" class="form-control" type="button" tabindex="5" ng-click="addSubscription()">Save</button>
+                </div>
+            </div>
+        </form>
+        <div class="row" ng-if="editingIndex === -1">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Updates</th>
+                    <th>Name</th>
+                    <th>Link</th>
+                    <th>Interval</th>
+                    <th>Selector</th>
+                    <th>Last</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="s in app.subscriptions">
+                    <td>
+                        <span class="badge badge-pill badge-{{s.updateCount > 0 ? 'success' : 'default'}}">{{s.updateCount || 0}}</span>
+                        <span class="badge badge-pill badge-danger" ng-if="s.error"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+                    </td>
+                    <td>{{s.name}}</td>
+                    <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
+                    <td>{{s.getIntervalH()}}</td>
+                    <td>{{s.idSelector}}</td>
+                    <td>{{s.lastValue || (s.lastUpdateDate ? 'check' : 'not executed')}}</td>
+                    <td style="min-width: 10.6em">
+                        <button class="btn btn-success smaller" ng-click="refreshSubscription($index)" title="check now" ng-disabled="s.checking"><i class="fa fa-refresh" ng-class="{'roll-infinite': s.checking}" aria-hidden="true"></i></button>
+                        <button class="btn btn-warning smaller" ng-click="resetSubscription($index)" title="set seen"><i class="fa fa-repeat" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger smaller" ng-click="editSubscription($index)" title="edit"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                        <button class="btn btn-default smaller" ng-click="removeSubscription($index)" title="move to trash"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div ng-if="viewMode == 2">
+        <div class="row">
+            <h3 ng-if="app.trash.length === 0">Trash is empty</h3>
+            <table class="table table-hover" ng-if="app.trash.length > 0">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Link</th>
+                    <th>Selector</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="s in app.trash">
+                    <td>{{s.name}}</td>
+                    <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
+                    <td>{{s.idSelector}}</td>
+                    <td></td>
+                    <td>
+                        <button class="btn btn-danger smaller" ng-click="removeSubscriptionForever($index)">delete forever</button>
+                        <button class="btn btn-success smaller" ng-click="restoreSubscription($index)">restore</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 </div>
 </body>
 </html>

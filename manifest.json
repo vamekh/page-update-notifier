@@ -9,17 +9,18 @@
     "48": "icons/icon128.png",
     "128": "icons/icon128.png"
   },
+  "browser_action": {
+    "default_icon": "icons/icon128.png",
+    "default_title": "Click to view new instances",
+    "default_popup": "pop-up/pop-up.html"
+  },
   "permissions": [
+    "notifications",
     "activeTab",
     "tabs",
     "http://*/*",
     "https://*/*"
   ],
-  "browser_action": {
-    "default_icon": "icons/icon128.png",
-    "default_title": "Click to view new instances",
-    "popup": "pop-up/pop-up.html"
-  },
   "options_page": "options/options.html",
   "background": {
     "persistent": false,

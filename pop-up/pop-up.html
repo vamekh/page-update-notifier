@@ -1,7 +1,54 @@
-<html>
-<body>
-<div style="white-space: nowrap">
-    Here will be listed new instances
+<html lang="en" ng-app="updateNotifierApp" ng-csp>
+<head>
+    <link rel="stylesheet" href="../common/bootstrap.min.css">
+    <link rel="stylesheet" href="../fonts/font-awesome.min.css">
+    <style>
+        body {
+            padding: 1em 2em;
+        }
+        .create {
+            display: flex;
+            justify-content: space-between;
+            padding: 1em 0;
+        }
+        table td button.btn {
+            font-size: 1.2em;
+            padding: 0.2em 0.4em;
+        }
+    </style>
+</head>
+<body ng-controller="personController">
+<div style="white-space: nowrap"></div>
+
+<div class="create">
+    <button class="btn btn-success" ng-click="openOptions(true)">Subscribe to this page</button>
+    <button class="btn btn-danger smaller" ng-click="openOptions()"><i class="fa fa-cogs" aria-hidden="true"></i></button>
 </div>
+
+<div style="white-space: nowrap">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>subscription</th>
+            <th>updates</th>
+            <th>link</th>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="s in app.subscriptions">
+            <td>{{s.name}}</td>
+            <td>{{s.updateCount}}</td>
+            <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
+            <td>
+                <button class="btn btn-success smaller" ng-click="resetSubscription($index)"><i class="fa fa-repeat" aria-hidden="true"></i></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="../common/update-notifier.js"></script>
+<script src="../common/angular.min.js"></script>
+<script src="../options/options-controller.js"></script>
 </body>
 </html>

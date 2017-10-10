@@ -3,16 +3,16 @@
 		chrome.pageAction.show(tabId);
 	}
 };*/
-
+var cb;
+var port = chrome.extension.connect({name: "Sample Communication"});
 setInterval(function () {
-    var appData = new UpdateNotifier();
-    appData.subscriptions.forEach(function (s) {
-        s.checkForUpdates(function () {
-            appData.synchronize();
-        })
+    var app = new UpdateNotifier();
+    var currentDate = new Date().getTime();
+    app.subscriptions.forEach(function (s) {
+        if (!s.lastUpdateDate || ((s.lastUpdateDate + parseInt(s.interval)) < currentDate)) {
+            s.checkForUpdates(function () {
+                app.synchronize();
+            });
+        }
     });
-}, 15000);
-
-chrome.browserAction.setBadgeText({text: ''});
-bd = chrome.extension.getBackgroundPage();
-bg=unreadCount = 0;
+}, 5000);

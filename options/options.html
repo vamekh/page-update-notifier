@@ -157,10 +157,16 @@
                     <input id="newItemIdSelector" class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" required>
                 </div>
             </div>
+            <div class="col-md-1">
+                <div class="form-group">
+                    <label for="newItemIdSelector">Attribute</label>
+                    <input id="newItemAttribute" class="form-control" tabindex="4" ng-model="subscriptionToAdd.attribute" required>
+                </div>
+            </div>
             <div class="col-md-2">
                 <div class="form-group">
                     <label for="newItemInterval">Interval</label>
-                    <select id="newItemInterval" class="form-control" tabindex="4" required ng-model="subscriptionToAdd.interval">
+                    <select id="newItemInterval" class="form-control" tabindex="5" required ng-model="subscriptionToAdd.interval">
                         <option value="{{5*1000}}">5 seconds</option>
                         <option value="{{60*1000}}">1 minute</option>
                         <option value="{{5*60*1000}}">5 minutes</option>
@@ -173,10 +179,10 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <div class="form-group">
                     <label style="opacity: 0">hidden</label>
-                    <button id="addNewSubscription" class="form-control" type="button" tabindex="5" ng-click="addSubscription()">Save</button>
+                    <button id="addNewSubscription" class="form-control" type="button" tabindex="6" ng-click="addSubscription()">Save</button>
                 </div>
             </div>
         </form>
@@ -189,6 +195,7 @@
                     <th>Link</th>
                     <th>Interval</th>
                     <th>Selector</th>
+                    <th>Attribute</th>
                     <th>Last</th>
                     <th></th>
                 </tr>
@@ -203,8 +210,9 @@
                     <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
                     <td>{{s.getIntervalH()}}</td>
                     <td>{{s.idSelector}}</td>
+                    <td>{{s.attribute}}</td>
                     <td>{{s.lastValue || (s.lastUpdateDate ? 'check' : 'not executed')}}</td>
-                    <td style="min-width: 10.6em">
+                    <td style="min-width: 10.6em; text-align: right">
                         <button class="btn btn-success smaller" ng-click="refreshSubscription($index)" title="check now" ng-disabled="s.checking"><i class="fa fa-refresh" ng-class="{'roll-infinite': s.checking}" aria-hidden="true"></i></button>
                         <button class="btn btn-warning smaller" ng-click="resetSubscription($index)" title="set seen"><i class="fa fa-repeat" aria-hidden="true"></i></button>
                         <button class="btn btn-danger smaller" ng-click="editSubscription($index)" title="edit"><i class="fa fa-pencil" aria-hidden="true"></i></button>

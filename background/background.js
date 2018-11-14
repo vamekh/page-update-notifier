@@ -6,12 +6,12 @@
 var cb;
 var port = chrome.extension.connect({name: "Sample Communication"});
 setInterval(function () {
-    var app = new UpdateNotifier();
-    var currentDate = new Date().getTime();
-    app.subscriptions.forEach(function (s) {
-        if (!s.lastUpdateDate || ((s.lastUpdateDate + parseInt(s.interval)) < currentDate)) {
-            s.checkForUpdates(function () {
-                app.synchronize();
+    const app = new UpdateNotifier();
+    const currentDate = new Date().getTime();
+    app.subscriptions.forEach(function (subscription) {
+        if (!subscription.lastUpdateDate || ((subscription.lastUpdateDate + parseInt(subscription.interval)) < currentDate)) {
+            subscription.checkForUpdates(function () {
+                app.writeToLocalStorage();
             });
         }
     });

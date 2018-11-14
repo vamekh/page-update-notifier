@@ -1,67 +1,62 @@
 const address = "updateNotifier";
-var port = chrome.extension.connect({name: "Sample Communication"});
+const port = chrome.extension.connect({name: "Sample Communication"});
+
+const knownSelectors = {
+    "mymarket.ge": [
+        {name: "სიახლე მერიისგან", idSelector: "ul.pr-search-list li", attribute: 'data-pr-id'}
+    ],
+    "tbilisi.gov.ge": [
+        {name: "სიახლე მერიისგან", idSelector: ".newses .news .textual .title", idType: 'innerHtml'}
+    ],
+};
 
 function UpdateNotifier() {
-    var appData = localStorage[address];
-    if (appData) {
-        appData = JSON.parse(appData);
-        this.subscriptions = appData.subscriptions || [];
-        this.trash = appData.trash || [];
-        this.trashSize = appData.trashSize || 10;
-    } else {
-        this.subscriptions = [];
-        this.trash = [];
-        this.trashSize = 10;
-    }
-
-    for (var i = 0; i < this.subscriptions.length; i++) this.subscriptions[i] = new Subscription(this.subscriptions[i]);
-    for (var j = 0; j < this.trash.length; j++) this.trash[j] = new Subscription(this.trash[j]);
-
-    this.synchronize = function () {
-        var totalUpdatesNewValue = 0;
-        for (var k = 0; k < this.subscriptions.length; k++) {
-            totalUpdatesNewValue += this.subscriptions[k].updateCount;
-        }
-        this.totalUpdates = totalUpdatesNewValue;
-
-        chrome.browserAction.setBadgeText({text: this.totalUpdates ? this.totalUpdates + '' : ''});
-
-        localStorage[address] = JSON.stringify(this);
-        //port.postMessage("sync please");
-        return true;
-    };
-
-    this.addSubscription = function (subscription, index) {
-        var me = this;
-        if (subscription instanceof Subscription) {
-            if (index > -1) {
-                this.subscriptions.splice(index, 1, subscription)
-            } else {
-                this.subscriptions.push(subscription);
-            }
-            subscription.checkForUpdates(function () {
-                me.synchronize();
-            });
-        }
-    }
+    this.readFromLocalStorage();
 }
 
-function Subscription(name, link, idSelector, interval, viewSelector, lastValue) {
+UpdateNotifier.prototype.readFromLocalStorage = function () {
+    let appData = localStorage[address];
+    if (!appData) {
+        const emptyData = {subscriptions: [], trash: [], trashSize: 10};
+        localStorage[address] = JSON.stringify(emptyData);
+    }
+    appData = JSON.parse(appData);
+    this.subscriptions = (appData.subscriptions || []).map(subscription => new Subscription(subscription));
+    this.trash = (appData.trash || []).map(deletedSubscription => new Subscription(deletedSubscription));
+    this.trashSize = appData.trashSize || 10;
+};
+
+UpdateNotifier.prototype.writeToLocalStorage = function () {
+    this.totalUpdates = 0;
+    this.subscriptions.forEach(s => this.totalUpdates += (s.updateCount || 0));
+    chrome.browserAction.setBadgeText({text: this.totalUpdates ? this.totalUpdates + '' : ''});
+    localStorage[address] = JSON.stringify(this);
+    //port.postMessage("sync please");
+    return true;
+};
+
+UpdateNotifier.prototype.addSubscription = function (subscription, index) {
+
+    if (subscription instanceof Subscription) {
+        if (index > -1) {
+            this.subscriptions.splice(index, 1, subscription);
+        } else {
+            this.subscriptions.push(subscription);
+        }
+        me.writeToLocalStorage();
+        subscription.checkForUpdates(()=> {
+            this.writeToLocalStorage();
+            this.readFromLocalStorage();
+        });
+    }
+};
+
+function Subscription(name, link, idSelector, attribute, interval, viewSelector, lastValue) {
     if (arguments.length === 1 && arguments[0] instanceof Object) {
-        this.createdAt = arguments[0].createdAt;
-        this.updatedAt = arguments[0].updatedAt;
-        this.name = arguments[0].name;
-        this.link = arguments[0].link;
-        this.idSelector = arguments[0].idSelector;
-        this.interval = arguments[0].interval || (5 * 60 * 1000);
-        this.lastUpdateDate = arguments[0].lastUpdateDate;
-        this.viewSelector = arguments[0].viewSelector;
-        this.lastValue = arguments[0].lastValue;
-        this.updateCount = arguments[0].updateCount;
-        this.error = arguments[0].error;
+        for (let key in arguments[0]) this[key] = arguments[0][key];
     } else {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.createdAt = new Date().getTime();
+        this.updatedAt = new Date().getTime();
         this.name = name;
         this.link = link;
         this.idSelector = idSelector;
@@ -71,14 +66,15 @@ function Subscription(name, link, idSelector, interval, viewSelector, lastValue)
         this.lastValue = lastValue;
         this.updateCount = 0;
         this.error = false;
+        this.attribute = attribute;
     }
     this.checking = false;
 }
 
 Subscription.prototype.checkForUpdates = function (cb) {
-    var me = this;
+    const me = this;
     me.checking = true;
-    var req = new XMLHttpRequest();
+    const req = new XMLHttpRequest();
     req.onreadystatechange = function (res) {
         try {
             if (this.readyState === 4) {
@@ -86,15 +82,14 @@ Subscription.prototype.checkForUpdates = function (cb) {
                     var parser = new DOMParser();
                     var doc = parser.parseFromString(res.srcElement.responseText, "text/html");
                     var results = doc.querySelectorAll(me.idSelector);
-                    if (!me.lastValue) {
-                        if (results.length > 0) {
-                            me.updateCount = 0;
-                            me.lastValue = results[0].innerHTML;
-                        }
+                    if (!me.lastValue && results.length > 0) {
+                        me.updateCount = 0;
+                        me.lastValue = me.retrieveValue(results[0]);
                     }
-                    var updateCountNewValue = 0;
-                    for (var i = 0; i < results.length; i++) {
-                        if (results[i].innerHTML === me.lastValue) {
+                    let updateCountNewValue = 0;
+                    for (let i = 0; i < results.length; i++) {
+                        let resultValue = me.retrieveValue(results[i]);
+                        if (resultValue === me.lastValue) {
                             break;
                         }
                         updateCountNewValue++;
@@ -126,6 +121,14 @@ Subscription.prototype.checkForUpdates = function (cb) {
     req.open('GET', this.link);
     req.send();
 
+};
+
+Subscription.prototype.retrieveValue = function (element) {
+    if (this.attribute) {
+        return element.getAttribute(this.attribute);
+    } else {
+        return element.innerHTML;
+    }
 };
 
 Subscription.prototype.getIntervalH = function () {

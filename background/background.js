@@ -3,8 +3,8 @@
 		chrome.pageAction.show(tabId);
 	}
 };*/
-var cb;
-var port = chrome.extension.connect({name: "Sample Communication"});
+//var cb;
+//var port = chrome.extension.connect({name: "Sample Communication"});
 setInterval(function () {
     const app = new UpdateNotifier();
     const currentDate = new Date().getTime();

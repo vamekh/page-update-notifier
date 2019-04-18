@@ -128,6 +128,22 @@
             animation-timing-function: ease-in
         }
 
+        .sticky *:first-child input,select{
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .sticky>:not(:first-child):not(:last-child) input,select{
+            border-radius: 0;
+        }
+        .sticky *:last-child select{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .sticky .form-group{
+            margin-right: -1px;
+        }
+
     </style>
 </head>
 <body>
@@ -151,22 +167,29 @@
                     <input id="newItemLink" class="form-control" tabindex="2" ng-model="subscriptionToAdd.link" required ng-pattern="/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/">
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3 sticky" style="display: flex;">
                 <div class="form-group">
                     <label for="newItemIdSelector">Selector</label>
                     <input id="newItemIdSelector" class="form-control" tabindex="3" ng-model="subscriptionToAdd.idSelector" required>
                 </div>
-            </div>
-            <div class="col-md-1">
                 <div class="form-group">
                     <label for="newItemIdSelector">Attribute</label>
                     <input id="newItemAttribute" class="form-control" tabindex="4" ng-model="subscriptionToAdd.attribute" required>
                 </div>
+                <div class="form-group">
+                    <label for="newItemSelectorLibrary">Known</label>
+                    <select id="newItemSelectorLibrary" class="form-control" tabindex="6"
+                            ng-model="selectedaaa"
+                            ng-change="selectorChoose(selectedaaa)"
+                            ng-options="option as option.name for option in selectorLibrary[getHostname()]">
+                    </select>
+                </div>
             </div>
+
             <div class="col-md-2">
                 <div class="form-group">
                     <label for="newItemInterval">Interval</label>
-                    <select id="newItemInterval" class="form-control" tabindex="5" required ng-model="subscriptionToAdd.interval">
+                    <select id="newItemInterval" class="form-control" tabindex="7" required ng-model="subscriptionToAdd.interval">
                         <option value="{{5*1000}}">5 seconds</option>
                         <option value="{{60*1000}}">1 minute</option>
                         <option value="{{5*60*1000}}">5 minutes</option>
@@ -182,7 +205,7 @@
             <div class="col-md-1">
                 <div class="form-group">
                     <label style="opacity: 0">hidden</label>
-                    <button id="addNewSubscription" class="form-control" type="button" tabindex="6" ng-click="addSubscription()">Save</button>
+                    <button id="addNewSubscription" class="form-control" type="button" tabindex="8" ng-click="addSubscription()">Save</button>
                 </div>
             </div>
         </form>
@@ -204,7 +227,9 @@
                 <tr ng-repeat="s in app.subscriptions">
                     <td>
                         <span class="badge badge-pill badge-{{s.updateCount > 0 ? 'success' : 'default'}}">{{s.updateCount || 0}}</span>
-                        <span class="badge badge-pill badge-danger" ng-if="s.error"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+                        <span class="badge badge-pill badge-danger" ng-if="s.hasErrors" title="{{s.error}}" >
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                        </span>
                     </td>
                     <td>{{s.name}}</td>
                     <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
@@ -213,8 +238,8 @@
                     <td>{{s.attribute}}</td>
                     <td>{{s.lastValue || (s.lastUpdateDate ? 'check' : 'not executed')}}</td>
                     <td style="min-width: 10.6em; text-align: right">
-                        <button class="btn btn-success smaller" ng-click="refreshSubscription($index)" title="check now" ng-disabled="s.checking"><i class="fa fa-refresh" ng-class="{'roll-infinite': s.checking}" aria-hidden="true"></i></button>
-                        <button class="btn btn-warning smaller" ng-click="resetSubscription($index)" title="set seen"><i class="fa fa-repeat" aria-hidden="true"></i></button>
+                        <button class="btn btn-success smaller" ng-click="refreshSubscription(s)" title="check now" ng-disabled="s.checking"><i class="fa fa-refresh" ng-class="{'roll-infinite': s.checking}" aria-hidden="true"></i></button>
+                        <button class="btn btn-warning smaller" ng-click="resetSubscription(s)" title="set seen"><i class="fa fa-repeat" aria-hidden="true"></i></button>
                         <button class="btn btn-danger smaller" ng-click="editSubscription($index)" title="edit"><i class="fa fa-pencil" aria-hidden="true"></i></button>
                         <button class="btn btn-default smaller" ng-click="removeSubscription($index)" title="move to trash"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                     </td>

@@ -43,8 +43,9 @@ UpdateNotifier.prototype.addSubscription = function (subscription, index) {
         } else {
             this.subscriptions.push(subscription);
         }
-        me.writeToLocalStorage();
-        subscription.checkForUpdates(()=> {
+        this.writeToLocalStorage();
+        subscription.checkForUpdates(() => {
+
             this.writeToLocalStorage();
             this.readFromLocalStorage();
         });
@@ -72,49 +73,56 @@ function Subscription(name, link, idSelector, attribute, interval, viewSelector,
 }
 
 Subscription.prototype.checkForUpdates = function (cb) {
-    const me = this;
-    me.checking = true;
+    const thisSubscription = this;
+    thisSubscription.checking = true;
     const req = new XMLHttpRequest();
     req.onreadystatechange = function (res) {
         try {
             if (this.readyState === 4) {
                 if (this.status === 200) {
-                    var parser = new DOMParser();
-                    var doc = parser.parseFromString(res.srcElement.responseText, "text/html");
-                    var results = doc.querySelectorAll(me.idSelector);
-                    if (!me.lastValue && results.length > 0) {
-                        me.updateCount = 0;
-                        me.lastValue = me.retrieveValue(results[0]);
+                    /*when loaded successfully*/
+                    console.log('parsing dom...');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(res.srcElement.responseText, "text/html");
+                    const results = doc.querySelectorAll(thisSubscription.idSelector);
+                    console.log('lastval', thisSubscription.lastValue);
+                    if (!thisSubscription.lastValue) {
+                        /*if this is newly added subscription or no value was found*/
+                        thisSubscription.updateCount = 0;
+                        thisSubscription.lastValue = results.length > 0 ? thisSubscription.retrieveValue(results[0]) : undefined;
                     }
                     let updateCountNewValue = 0;
+                    let resultValue;
                     for (let i = 0; i < results.length; i++) {
-                        let resultValue = me.retrieveValue(results[i]);
-                        if (resultValue === me.lastValue) {
+                        resultValue = thisSubscription.retrieveValue(results[i]);
+                        if (resultValue === thisSubscription.lastValue) {
                             break;
                         }
                         updateCountNewValue++;
                     }
-                    if (me.updateCount < updateCountNewValue) {
+                    if (thisSubscription.updateCount < updateCountNewValue) {
                         chrome.notifications.create(undefined, {
                             type: 'basic',
                             iconUrl: '../icons/icon128.png',
                             title: 'Update On Page',
-                            message: 'Subscription: ' + me.name + '<br>' + (updateCountNewValue - me.updateCount) + ' new items.'
+                            message: 'Subscription: ' + thisSubscription.name + '\n' + (updateCountNewValue - thisSubscription.updateCount) + ' new items.'
                         });
                     }
-                    me.updateCount = updateCountNewValue;
-                    me.lastUpdateDate = new Date().getTime();
-                    me.hasErrors = false;
-                    me.checking = false;
+                    thisSubscription.updateCount = updateCountNewValue;
+                    thisSubscription.lastUpdateDate = new Date().getTime();
+                    thisSubscription.hasErrors = false;
+                    thisSubscription.checking = false;
                     cb();
                 } else {
                     throw {status: this.status, statusText: this.statusText, responseText: this.responseText};
                 }
             }
         } catch (e) {
-            me.error = e;
-            me.lastUpdateDate = new Date().getTime();
-            me.checking = false;
+            console.log('catched');
+            thisSubscription.error = e;
+            thisSubscription.hasErrors = true;
+            thisSubscription.lastUpdateDate = new Date().getTime();
+            thisSubscription.checking = false;
             cb();
         }
     };

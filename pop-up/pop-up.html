@@ -36,7 +36,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="s in app.subscriptions">
+        <tr ng-repeat="s in app.subscriptions track by $index">
             <td>{{s.name}}</td>
             <td>{{s.updateCount}}</td>
             <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>

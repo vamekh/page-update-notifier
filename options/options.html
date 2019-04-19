@@ -224,7 +224,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="s in app.subscriptions">
+                <tr ng-repeat="s in app.subscriptions track by $index">
                     <td>
                         <span class="badge badge-pill badge-{{s.updateCount > 0 ? 'success' : 'default'}}">{{s.updateCount || 0}}</span>
                         <span class="badge badge-pill badge-danger" ng-if="s.hasErrors" title="{{s.error}}" >
@@ -262,7 +262,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="s in app.trash">
+                <tr ng-repeat="s in app.trash track by $index">
                     <td>{{s.name}}</td>
                     <td><a href="{{s.link}}" target="_blank">{{s.link.split("/")[2]}}</a></td>
                     <td>{{s.idSelector}}</td>

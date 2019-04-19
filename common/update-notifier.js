@@ -81,11 +81,9 @@ Subscription.prototype.checkForUpdates = function (cb) {
             if (this.readyState === 4) {
                 if (this.status === 200) {
                     /*when loaded successfully*/
-                    console.log('parsing dom...');
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(res.srcElement.responseText, "text/html");
                     const results = doc.querySelectorAll(thisSubscription.idSelector);
-                    console.log('lastval', thisSubscription.lastValue);
                     if (!thisSubscription.lastValue) {
                         /*if this is newly added subscription or no value was found*/
                         thisSubscription.updateCount = 0;
@@ -118,7 +116,6 @@ Subscription.prototype.checkForUpdates = function (cb) {
                 }
             }
         } catch (e) {
-            console.log('catched');
             thisSubscription.error = e;
             thisSubscription.hasErrors = true;
             thisSubscription.lastUpdateDate = new Date().getTime();

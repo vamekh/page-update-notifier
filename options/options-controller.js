@@ -14,10 +14,12 @@ var personController = updateNotifierApp.controller('personController', function
         'mymarket.ge': [
             {name: 'არა vip განცხადებები', idSelector: 'li.vip-0.shopping-[data-pr-id]', attribute: 'data-pr-id'},
             {name: 'განცხადებები', idSelector: 'li.shopping-[data-pr-id]', attribute: 'data-pr-id'}
+        ],
+        'myhome.ge': [
+            {name: 'განცხადებები', idSelector: '.statement-card', attribute: 'data-product-id'}
         ]
     };
 
-    console.log(localStorage.subscriptionToEditUrl);
     if (localStorage.subscriptionToEditUrl) {
 
         $scope.subscriptionToAdd = {link: localStorage.subscriptionToEditUrl};
@@ -64,7 +66,6 @@ var personController = updateNotifierApp.controller('personController', function
     };
 
     $scope.selectorChoose = function (selector) {
-        console.log('click', $scope.selectedaaa, selector);
         if($scope.selectedaaa){
             $scope.subscriptionToAdd.attribute = selector.attribute;
             $scope.subscriptionToAdd.idSelector = selector.idSelector;
@@ -72,7 +73,6 @@ var personController = updateNotifierApp.controller('personController', function
     };
 
     $scope.getHostname = function () {
-        console.log('link changed');
         const link = $scope.subscriptionToAdd.link;
         if (link) {
             try {
